@@ -1,0 +1,43 @@
+name: Build Backend
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "backend/**"
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Docker: meta"
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v3
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ${{ secrets.DOCKER_REGISTRY }}/joymesh-backend
+          # add git short SHA as Docker tag
+          tags: |
+            type=raw,value={{branch}}-{{sha}}-{{date 'YYYYMMDD'}}
+      - name: "Docker: Set up QEMU"
+        uses: docker/setup-qemu-action@v1
+      - name: "Docker: Set up Buildx"
+        uses: docker/setup-buildx-action@v1
+      - name: "Docker: Login to registry"
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: "Docker: Build and Push"
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
