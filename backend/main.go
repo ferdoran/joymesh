@@ -17,7 +17,7 @@ func main() {
 func loadNavmeshes() {
 	logrus.Infoln("loading navmeshes")
 
-	loader = navmeshv2.NewLoader("/Users/rmu/workspaces/private/go-sro/agent-server/Data.pk2")
+	loader = navmeshv2.NewLoader("data/Data.pk2")
 	loader.LoadNavMeshInfos()
 	progressChan := make(chan int, loader.MapProjectInfo.ActiveRegionsCount)
 	loader.LoadTerrainMeshes(progressChan)
