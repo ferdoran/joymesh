@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/ferdoran/go-sro/agent-server/navmeshv2"
+	"github.com/ferdoran/joymesh/backend/region"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 var loader *navmeshv2.Loader
@@ -27,15 +27,9 @@ func loadNavmeshes() {
 
 func startEcho() {
 	e := echo.New()
-	e.GET("/api/regions", getRegions)
+	api := e.Group("/api")
+
+	region.RegisterRoutes(api, loader)
+
 	e.Logger.Fatal(e.Start(":8080"))
-}
-
-func getRegions(c echo.Context) error {
-	regions := make([]navmeshv2.Region, 0)
-	for _, v := range loader.RegionData {
-		regions = append(regions, v.Region)
-	}
-
-	return c.JSON(http.StatusOK, &regions)
 }
