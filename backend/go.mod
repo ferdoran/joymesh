@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/ferdoran/go-sro v0.1.3
 	github.com/g3n/engine v0.1.0
+	github.com/gocarina/gocsv v0.0.0-20220927221512-ad3251f9fa25
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/sirupsen/logrus v1.7.0
 )
