@@ -10,4 +10,5 @@ RUN CGO_ENABLED=0 go build -o /go/bin/app
 
 FROM gcr.io/distroless/static
 COPY --from=build /go/bin/app /
+COPY region/continents.csv /region/continents.csv
 CMD ["/app"]
