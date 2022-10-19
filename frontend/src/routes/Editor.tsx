@@ -1,22 +1,22 @@
 import {useState} from "react";
-import FileList from "../components/FileList";
+import ContinentList from "../components/ContinentList";
 import {Grid} from "@mui/material";
 import NavmeshViewer from "../components/NavmeshViewer";
 
 export default function Editor() {
-    const [activeFile, setActiveFile] = useState<File>()
+    const [activeContinent, setActiveContinent] = useState<string>()
 
-    const onFileSelected = (file: File) => {
-        setActiveFile(file)
+    const onContinentSelected = (continent: string) => {
+        setActiveContinent(continent)
     }
 
     return (
-        <Grid container alignItems="stretch" sx={{height: '100%'}}>
+        <Grid container alignItems="stretch">
             <Grid item xs={2}>
-                <FileList onFileSelected={onFileSelected}/>
+                <ContinentList onContinentSelected={onContinentSelected}/>
             </Grid>
             <Grid item xs={10}>
-                <NavmeshViewer file={activeFile}></NavmeshViewer>
+                <NavmeshViewer continent={activeContinent}></NavmeshViewer>
             </Grid>
         </Grid>
     )

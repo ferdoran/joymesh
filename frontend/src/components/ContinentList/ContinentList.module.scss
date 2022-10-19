@@ -1,0 +1,31 @@
+@use "src/styles/_colors.scss";
+@use "sass:color";
+
+.list {
+  height: 100%;
+  padding-top: 0;
+  $border-color: color.scale(colors.$bg-primary, $lightness: 5%);
+
+  &__divider {
+    border-color: $border-color;
+  }
+
+  &__item {
+    border-right-style: solid;
+    border-right-width: .1rem;
+    border-right-color: $border-color;
+
+    &:last-of-type {
+      border-bottom-style: solid;
+      border-bottom-width: .1rem;
+      border-bottom-color: $border-color;
+    }
+  }
+
+  &__header {
+    background-color: colors.$bg-primary;
+    color: colors.$primary;
+    font-weight: bolder;
+    font-size: 12pt;
+  }
+}
