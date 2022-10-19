@@ -5,6 +5,7 @@ import (
 	"github.com/ferdoran/joymesh/backend/region"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 var loader *navmeshv2.Loader
@@ -27,9 +28,14 @@ func loadNavmeshes() {
 
 func startEcho() {
 	e := echo.New()
+	e.GET("/health", healthHandler)
 	api := e.Group("/api")
 
 	region.RegisterRoutes(api, loader)
 
 	e.Logger.Fatal(e.Start(":8080"))
+}
+
+func healthHandler(c echo.Context) error {
+	return c.String(http.StatusOK, `{"status":"UP"}`)
 }
