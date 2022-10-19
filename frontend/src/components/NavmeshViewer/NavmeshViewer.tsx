@@ -16,7 +16,7 @@ export const ScaleFactor = .1
 
 export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     const [regions, setRegions] = useState<Region[]>([])
-    const camera = useRef<THREE.PerspectiveCamera>(new THREE.PerspectiveCamera(75, 1, .1, 50_000))
+    const camera = useRef<THREE.PerspectiveCamera>(new THREE.PerspectiveCamera(75, 1, 10, 100_000))
     const controls = useRef<OrbitControlsImpl>(null)
     useEffect(() => {
         if (continent) {
