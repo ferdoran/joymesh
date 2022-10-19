@@ -20,7 +20,7 @@ jobs:
             ${{ secrets.DOCKER_REGISTRY }}/joymesh-backend
           # add git short SHA as Docker tag
           tags: |
-            type=raw,value={{branch}}-{{sha}}-{{date 'YYYYMMDD'}}
+            type=raw,value={{branch}}-{{sha}}-{{date 'YYYYMMDD_HHmmss'}}
       - name: "Docker: Set up QEMU"
         uses: docker/setup-qemu-action@v1
       - name: "Docker: Set up Buildx"
