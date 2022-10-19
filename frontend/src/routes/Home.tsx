@@ -1,27 +1,12 @@
-import {DragEvent, useContext} from "react";
-import {Stack} from "@mui/material";
-import FileDropper from "../components/FileDropper";
-import {useNavigate} from "react-router-dom";
-import {FilesContext} from "../App";
+import {Button, Stack, Typography} from "@mui/material";
+import {Link as RouterLink} from "react-router-dom"
 
 export default function Home() {
-    const filesContext = useContext(FilesContext)
-    const navigate = useNavigate()
-
-    const handleFilesDrop = (event: DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-
-
-        Array.from(event.dataTransfer.files).forEach(file => {
-            filesContext.set(file.name, file)
-        })
-
-        navigate('/editor')
-    }
 
     return (
-        <Stack sx={{height: '100%'}} direction="column" justifyContent="center" alignItems="center" spacing={2}>
-            <FileDropper onDrop={handleFilesDrop} />
+        <Stack sx={{height: '100%'}} direction="column" alignItems="center" spacing={2}>
+            <Typography>Welcome to Joymesh, the first publicly available editor for Silkroad Online navigation meshes.</Typography>
+            <Button variant="outlined" component={RouterLink} to="/editor">Get started</Button>
         </Stack>
     )
 }

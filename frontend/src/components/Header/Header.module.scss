@@ -1,4 +1,11 @@
+@use "src/styles/_colors.scss";
+
 .title {
   padding-left: .5rem;
   padding-right: .5rem;
+  text-decoration: none;
+
+  &:visited {
+    color: colors.$primary;
+  }
 }

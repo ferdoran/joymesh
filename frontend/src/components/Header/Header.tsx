@@ -1,4 +1,5 @@
-import {AppBar, Container, Toolbar, Typography} from "@mui/material";
+import {AppBar, Container, Link, Toolbar} from "@mui/material"
+import {Link as RouterLink} from "react-router-dom"
 import MapIcon from "@mui/icons-material/Map"
 import styles from "./Header.module.scss"
 
@@ -8,7 +9,7 @@ export default function Header() {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <MapIcon />
-                    <Typography variant="h6" noWrap className={styles.title}>JOYMESH</Typography>
+                    <Link component={RouterLink} to="/" noWrap className={styles.title}>JOYMESH</Link>
                 </Toolbar>
             </Container>
         </AppBar>

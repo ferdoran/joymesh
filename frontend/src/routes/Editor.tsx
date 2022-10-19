@@ -1,20 +1,10 @@
-import {useContext, useEffect, useState} from "react";
-import {FilesContext} from "../App";
-import {useNavigate} from "react-router-dom";
+import {useState} from "react";
 import FileList from "../components/FileList";
 import {Grid} from "@mui/material";
 import NavmeshViewer from "../components/NavmeshViewer";
 
 export default function Editor() {
-    const filesContext = useContext(FilesContext)
-    const navigate = useNavigate()
     const [activeFile, setActiveFile] = useState<File>()
-
-    useEffect(() => {
-        if (filesContext.size === 0) {
-            navigate("/")
-        }
-    }, [filesContext, navigate])
 
     const onFileSelected = (file: File) => {
         setActiveFile(file)
