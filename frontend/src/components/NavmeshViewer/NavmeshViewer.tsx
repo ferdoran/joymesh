@@ -48,7 +48,7 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     return (
         <Canvas className={styles.canvas}>
             <PerspectiveCamera ref={camera}/>
-            <OrbitControls ref={controls}/>
+            <OrbitControls ref={controls} panSpeed={1.25} zoomSpeed={1.25} />
             <ambientLight/>
             <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1}/>
             <pointLight position={[10, 10, 10]}/>
