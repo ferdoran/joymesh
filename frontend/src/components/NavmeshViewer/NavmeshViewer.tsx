@@ -3,9 +3,9 @@ import styles from "./NavmeshViewer.module.scss"
 import {useEffect, useRef, useState} from "react";
 import {fetchRegionDetails, fetchRegionsForContinent, RegionDetails} from "../../api/ApiClient";
 import {RegionMesh} from "./RegionMesh";
-import {Line, MapControls, OrbitControls, PerspectiveCamera, Text} from "@react-three/drei";
+import {Line, MapControls, OrbitControls, Text} from "@react-three/drei";
 import type {OrbitControls as OrbitControlsImpl} from 'three-stdlib';
-import * as THREE from "three";
+import {AxesHelper, PerspectiveCamera} from "three";
 
 extend({Line, MapControls, PerspectiveCamera, Text})
 type NavmeshViewerProps = {
@@ -16,8 +16,8 @@ export const ScaleFactor = .1
 
 export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     const [regionDetails, setRegionDetails] = useState<RegionDetails[]>([])
-    const camera = useRef<THREE.PerspectiveCamera>(new THREE.PerspectiveCamera(25, 1, .1, 15_000))
-    const axesHelper = useRef(new THREE.AxesHelper(1920 * ScaleFactor * 10))
+    const camera = useRef<PerspectiveCamera>(new PerspectiveCamera(25, 1, .1, 100_000))
+    const axesHelper = useRef(new AxesHelper(1920 * ScaleFactor * 10))
     const controls = useRef<OrbitControlsImpl>(null)
     useEffect(() => {
         if (continent) {
@@ -38,9 +38,11 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     }, [continent])
 
     return (
-        <Canvas className={styles.canvas}>
-            <PerspectiveCamera ref={camera}/>
+        <Canvas className={styles.canvas} frameloop="demand">
+            <ambientLight />
+            <perspectiveCamera ref={camera}/>
             <OrbitControls ref={controls} panSpeed={1.75} zoomSpeed={1.25} />
+
             <axesHelper ref={axesHelper} />
             {regionDetails.map(reg => (
                 <RegionMesh key={reg.meta.ID} region={reg} />
