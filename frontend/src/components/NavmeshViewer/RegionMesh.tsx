@@ -39,7 +39,6 @@ export function RegionMesh({region}: RegionProps) {
             }
         }
 
-        console.log("finished geom for", region.meta.ID)
         const geom = new THREE.PlaneGeometry(1920 * ScaleFactor, 1920 * ScaleFactor, 96, 96)
         geom.setFromPoints(points)
         return geom
