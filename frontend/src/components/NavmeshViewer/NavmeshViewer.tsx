@@ -1,7 +1,7 @@
 import {Canvas, extend} from "@react-three/fiber";
 import styles from "./NavmeshViewer.module.scss"
 import {useEffect, useRef, useState} from "react";
-import {fetchRegionsForContinent, Region} from "../../api/ApiClient";
+import {fetchRegionDetails, fetchRegionsForContinent, RegionDetails} from "../../api/ApiClient";
 import {RegionMesh} from "./RegionMesh";
 import {Line, MapControls, OrbitControls, PerspectiveCamera, Text} from "@react-three/drei";
 import type {OrbitControls as OrbitControlsImpl} from 'three-stdlib';
@@ -15,47 +15,35 @@ type NavmeshViewerProps = {
 export const ScaleFactor = .1
 
 export default function NavmeshViewer({continent}: NavmeshViewerProps) {
-    const [regions, setRegions] = useState<Region[]>([])
-    const camera = useRef<THREE.PerspectiveCamera>(new THREE.PerspectiveCamera(75, 1, 10, 100_000))
+    const [regionDetails, setRegionDetails] = useState<RegionDetails[]>([])
+    const camera = useRef<THREE.PerspectiveCamera>(new THREE.PerspectiveCamera(25, 1, .1, 15_000))
+    const axesHelper = useRef(new THREE.AxesHelper(1920 * ScaleFactor * 10))
     const controls = useRef<OrbitControlsImpl>(null)
     useEffect(() => {
         if (continent) {
             document.title = `Joymesh - ${continent}`
             fetchRegionsForContinent(continent).then(regions => {
-                setRegions(regions)
-
-                const x = calcCenterX(regions)
-                const z = calcCenterY(regions)
-                controls.current!.object.position.set(x, 20, z)
-                controls.current!.target.set(x, 0, z)
-
+                return Promise.all(regions.map(r => fetchRegionDetails(r.ID)))
             })
+                .then(resolvedDetails => {
+                    setRegionDetails(resolvedDetails)
+                    const x = resolvedDetails[0]?.meta.X * 1920 * ScaleFactor
+                    const z = resolvedDetails[0]?.meta.Y * 1920 * ScaleFactor
+                    controls.current!.object.position.set(x, resolvedDetails[0]?.heights[0], z)
+                    axesHelper.current.position.set(x, 0, z)
+                    controls.current!.target.set(x, 0, z)
+                })
         }
 
     }, [continent])
 
-    const calcCenterX = (regions: Region[]) => {
-        const avgX = regions.map(r => r.X).reduce((a, b) => a + b, 0) / regions.length
-
-        return Math.floor(avgX) * 192
-    }
-
-    const calcCenterY = (regions: Region[]) => {
-        const avgY = regions.map(r => r.Y).reduce((a, b) => a + b, 0) / regions.length
-        return Math.floor(avgY) * 192
-    }
-
     return (
         <Canvas className={styles.canvas}>
             <PerspectiveCamera ref={camera}/>
-            <OrbitControls ref={controls} panSpeed={1.25} zoomSpeed={1.25} />
-            <ambientLight/>
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1}/>
-            <pointLight position={[10, 10, 10]}/>
-            <gridHelper args={[1920 * ScaleFactor * 20, 40]}/>
-            <axesHelper args={[1920 * ScaleFactor * 20]}/>
-            {regions.map(reg => (
-                <RegionMesh key={reg.ID} region={reg}></RegionMesh>
+            <OrbitControls ref={controls} panSpeed={1.75} zoomSpeed={1.25} />
+            <axesHelper ref={axesHelper} />
+            {regionDetails.map(reg => (
+                <RegionMesh key={reg.meta.ID} region={reg} />
             ))}
         </Canvas>
     )

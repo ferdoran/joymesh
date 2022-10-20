@@ -72,8 +72,8 @@ type ObjectCell struct {
 }
 
 type Plane struct {
-	Height  float32
-	Surface byte
+	Height  float32 `json:"height"`
+	Surface byte    `json:"surface"`
 }
 
 func MapTerrainDetails(terrain navmeshv2.RtNavmeshTerrain) TerrainDetails {
