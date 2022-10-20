@@ -32,10 +32,12 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
                     controls.current!.object.position.set(x, resolvedDetails[0]?.heights[0], z)
                     axesHelper.current.position.set(x, 0, z)
                     controls.current!.target.set(x, 0, z)
+                    controls.current!.object.updateMatrix()
                 })
         }
 
     }, [continent])
+
 
     return (
         <Canvas className={styles.canvas}>

@@ -1,15 +1,20 @@
+const dev = false // gitignore#
+let host = ""
+if (dev) {
+    host = "http://localhost:8080"
+}
 export function fetchContinents() {
-    return fetch('/api/continents').then(resp => resp.json() as Promise<string[]>)
+    return fetch(host + '/api/continents').then(resp => resp.json() as Promise<string[]>)
 }
 
 export function fetchRegionsForContinent(continent: string) {
-    return fetch('/api/regions?' + new URLSearchParams({
+    return fetch(host + '/api/regions?' + new URLSearchParams({
         continent
     })).then(resp => resp.json() as Promise<Region[]>)
 }
 
 export function fetchRegionDetails(regionId: number) {
-    return fetch(`/api/regions/${regionId}`)
+    return fetch(host + `/api/regions/${regionId}`)
         .then(resp => resp.json() as Promise<RegionDetails>)
 }
 
