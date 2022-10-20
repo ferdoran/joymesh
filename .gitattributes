@@ -1,1 +1,1 @@
-*.jsx filter=gitignore
+**/*.tsx filter=gitignore

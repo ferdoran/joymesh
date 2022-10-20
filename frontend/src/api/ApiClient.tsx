@@ -1,4 +1,4 @@
-const dev = false // gitignore#
+const dev = true // gitignore#
 let host = ""
 if (dev) {
     host = "http://localhost:8080"
