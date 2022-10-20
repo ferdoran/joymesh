@@ -38,7 +38,7 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     }, [continent])
 
     return (
-        <Canvas className={styles.canvas} frameloop="demand">
+        <Canvas className={styles.canvas}>
             <ambientLight />
             <perspectiveCamera ref={camera}/>
             <OrbitControls ref={controls} panSpeed={1.75} zoomSpeed={1.25} />
