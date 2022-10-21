@@ -44,17 +44,17 @@ export function RegionMesh({region}: RegionProps) {
     }, [region.heights])
 
     return (
-        <instancedMesh>
-            <group ref={ref}>
-                <Text position={p1} fontSize={2} rotation={textRotation}
-                      color={defaultColor}>Region: {region.meta.ID}</Text>
-                <Plane geometry={fixedGeom} position={p1}>
-                    <meshBasicMaterial color={defaultColor} wireframe={true}></meshBasicMaterial>
-                </Plane>
+        <group ref={ref}>
+            <Text position={p1} fontSize={2} rotation={textRotation}
+                  color={defaultColor}>Region: {region.meta.ID}</Text>
+            <Plane geometry={fixedGeom} position={p1}>
+                <meshBasicMaterial color={defaultColor} wireframe={true}></meshBasicMaterial>
+            </Plane>
+            <group>
                 {region.objects.map((object, i) => (
                     <ObjectMesh key={i} regionMeta={region.meta} instance={object}/>
                 ))}
             </group>
-        </instancedMesh>
+        </group>
     )
 }
