@@ -4,6 +4,7 @@ import (
 	"github.com/ferdoran/go-sro/agent-server/navmeshv2"
 	"github.com/ferdoran/joymesh/backend/region"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -28,6 +29,7 @@ func loadNavmeshes() {
 
 func startEcho() {
 	e := echo.New()
+	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{Level: 5}))
 	e.GET("/health", healthHandler)
 	api := e.Group("/api")
 
