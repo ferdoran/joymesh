@@ -10,12 +10,16 @@ export default function Editor() {
         setActiveContinent(continent)
     }
 
+    const onContinentDeSelected = (_continent: string) => {
+        setActiveContinent(undefined)
+    }
+
     return (
-        <Grid container alignItems="stretch">
-            <Grid item xs={2}>
-                <ContinentList onContinentSelected={onContinentSelected}/>
+        <Grid container alignItems="stretch" columns={16}>
+            <Grid item xs={4} lg={2}>
+                <ContinentList onContinentSelected={onContinentSelected} onContinentDeSelected={onContinentDeSelected}/>
             </Grid>
-            <Grid item xs={10}>
+            <Grid item xs={12} lg={14}>
                 <NavmeshViewer continent={activeContinent}></NavmeshViewer>
             </Grid>
         </Grid>

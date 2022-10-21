@@ -14,12 +14,24 @@
     border-right-style: solid;
     border-right-width: .1rem;
     border-right-color: $border-color;
+    background-color: colors.$bg-primary;
+
+    &:hover {
+      filter: brightness(115%);
+    }
 
     &:last-of-type {
       border-bottom-style: solid;
       border-bottom-width: .1rem;
       border-bottom-color: $border-color;
     }
+  }
+
+  &__button {
+    color: colors.$primary;
+    transition: none;
+    padding: 0;
+    margin-right: -.5rem;
   }
 
   &__header {
