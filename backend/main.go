@@ -30,6 +30,7 @@ func loadNavmeshes() {
 func startEcho() {
 	e := echo.New()
 	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{Level: 5}))
+	e.Use(middleware.CORS())
 	e.GET("/health", healthHandler)
 	api := e.Group("/api")
 
