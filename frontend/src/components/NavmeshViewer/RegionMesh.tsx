@@ -40,7 +40,6 @@ export function RegionMesh({region}: RegionProps) {
 
         const geom = new THREE.PlaneGeometry(1920 * ScaleFactor, 1920 * ScaleFactor, 96, 96)
         geom.setFromPoints(points)
-
         setFixedGeom(geom)
     }, [region.heights])
 
@@ -55,7 +54,6 @@ export function RegionMesh({region}: RegionProps) {
                 {region.objects.map((object, i) => (
                     <ObjectMesh key={i} regionMeta={region.meta} instance={object}/>
                 ))}
-
             </group>
         </instancedMesh>
     )

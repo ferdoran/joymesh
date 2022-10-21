@@ -18,7 +18,6 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     const [regionDetails, setRegionDetails] = useState<RegionDetails[]>([])
     const camera = useRef<PerspectiveCamera>(new PerspectiveCamera(25, 1, .1, 5))
     const axesHelper = useRef(new AxesHelper())
-    // const controls = useRef<OrbitControlsImpl>(null)
     const controls = useRef<FlyControlsImpl>(null)
     useEffect(() => {
         if (continent) {
@@ -32,18 +31,14 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
                     const median = Math.floor(metas.length*.5)
 
 
-                    const x = metas[median].X * 1920 * ScaleFactor
+                    const x = (metas[median].X +1) * 1920 * ScaleFactor
                     const y = 100 + resolvedDetails[median].heights[0] * ScaleFactor
-                    const z = metas[median].Y * 1920 * ScaleFactor
+                    const z = (metas[median].Y +1) * 1920 * ScaleFactor
 
                     controls.current!.object.position.set(x, y, z)
                     controls.current!.object.lookAt(x, 0, z)
-                    console.log(camera.current.far)
-                    // controls.current!.object.rotateZ(Math.PI)
-                    // controls.current!.object.rotateX(Math.PI*.5)
-                    axesHelper.current.position.set(x, 0, z)
-                    // controls.current!.target.set(x, 0, z)
                     controls.current!.object.updateMatrix()
+                    axesHelper.current.position.set(x, 0, z)
                 })
         }
 

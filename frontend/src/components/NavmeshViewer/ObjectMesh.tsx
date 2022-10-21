@@ -15,6 +15,7 @@ const toVector3 = (p: Point) => new Vector3(p.X, p.Y, p.Z)
 export default function ObjectMesh({instance, regionMeta}: ObjectMeshProps) {
     const ref = useRef(null)
     const [cellVertices, setCellVertices] = useState<Vector3[][]>([])
+    const [lineColor, setLineColor] = useState<string>("white")
 
     useEffect(() => {
         const rX = regionMeta.X * 1920
@@ -33,7 +34,7 @@ export default function ObjectMesh({instance, regionMeta}: ObjectMeshProps) {
             b.add(regionOffset)
             c.add(regionOffset)
 
-            return [a, b, c]
+            return [a, b, c, a]
         })
 
 
@@ -42,10 +43,10 @@ export default function ObjectMesh({instance, regionMeta}: ObjectMeshProps) {
     }, [instance, regionMeta])
 
     return (
-        <instancedMesh>
-            <group ref={ref}>
+        <instancedMesh ref={ref} onPointerOver={() => setLineColor("hotpink")} onPointerOut={() => setLineColor("white")}>
+            <group ref={ref} >
                 {cellVertices.map((v, i) => (
-                    <Line key={i} points={v} color="white"/>
+                    <Line key={i} points={v} color={lineColor} wireframe={true}/>
                 ))}
             </group>
         </instancedMesh>
