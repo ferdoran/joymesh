@@ -8,9 +8,8 @@ export function fetchContinents() {
 }
 
 export function fetchRegionsForContinent(continent: string) {
-    return fetch(host + '/api/regions?' + new URLSearchParams({
-        continent
-    })).then(resp => resp.json() as Promise<Region[]>)
+    return fetch(`${host}/api/continents/${continent}`)
+        .then(resp => resp.json() as Promise<RegionDetails[]>)
 }
 
 export function fetchRegionDetails(regionId: number) {

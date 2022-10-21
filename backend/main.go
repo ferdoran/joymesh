@@ -1,8 +1,9 @@
 package main
 
 import (
+	middleware2 "backend/middleware"
+	"backend/region"
 	"github.com/ferdoran/go-sro/agent-server/navmeshv2"
-	"github.com/ferdoran/joymesh/backend/region"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
@@ -29,8 +30,8 @@ func loadNavmeshes() {
 
 func startEcho() {
 	e := echo.New()
-	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{Level: 5}))
 	e.Use(middleware.CORS())
+	e.Use(middleware2.BrotliWithConfig(middleware2.BrotliConfig{Level: 5}))
 	e.GET("/health", healthHandler)
 	api := e.Group("/api")
 

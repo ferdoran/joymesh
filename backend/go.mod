@@ -1,8 +1,9 @@
-module github.com/ferdoran/joymesh/backend
+module backend
 
 go 1.19
 
 require (
+	github.com/andybalholm/brotli v1.0.4
 	github.com/ferdoran/go-sro v0.1.3
 	github.com/g3n/engine v0.1.0
 	github.com/gocarina/gocsv v0.0.0-20220927221512-ad3251f9fa25

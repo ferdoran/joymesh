@@ -47,6 +47,7 @@ func RegisterRoutes(apiGroup *echo.Group, loader *navmeshv2.Loader) {
 
 	continentsGroup := apiGroup.Group("/continents")
 	continentsGroup.GET("", getContinents)
+	continentsGroup.GET("/:continent", getRegionDetailsForContinent)
 }
 
 func getRegionDetails(c echo.Context) error {
@@ -93,4 +94,20 @@ func getContinents(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, &cs)
+}
+
+func getRegionDetailsForContinent(c echo.Context) error {
+	continent := c.Param("continent")
+
+	regions := make([]TerrainDetails, 0)
+	if continentRegions, exist := continents[continent]; exist {
+		for _, r := range continentRegions {
+			if data, dataExists := regionData[r]; dataExists {
+				mappedData := MapTerrainDetails(data)
+				regions = append(regions, mappedData)
+			}
+		}
+	}
+
+	return c.JSON(http.StatusOK, regions)
 }

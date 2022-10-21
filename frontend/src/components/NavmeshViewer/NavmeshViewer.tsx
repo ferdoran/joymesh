@@ -1,7 +1,7 @@
 import {Canvas, extend} from "@react-three/fiber";
 import styles from "./NavmeshViewer.module.scss"
 import {useEffect, useRef, useState} from "react";
-import {fetchRegionDetails, fetchRegionsForContinent, RegionDetails} from "../../api/ApiClient";
+import {fetchRegionsForContinent, RegionDetails} from "../../api/ApiClient";
 import {RegionMesh} from "./RegionMesh";
 import {FlyControls, Line, MapControls, Text} from "@react-three/drei";
 import type {FlyControls as FlyControlsImpl} from 'three-stdlib';
@@ -22,9 +22,7 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     useEffect(() => {
         if (continent) {
             document.title = `Joymesh - ${continent}`
-            fetchRegionsForContinent(continent).then(regions => {
-                return Promise.all(regions.map(r => fetchRegionDetails(r.ID)))
-            })
+            fetchRegionsForContinent(continent)
                 .then(resolvedDetails => {
                     setRegionDetails(resolvedDetails)
                     const metas = resolvedDetails.map(r => r.meta).sort((a, b) => a.X - b.X)
