@@ -29,6 +29,7 @@ export interface RegionDetails {
     tiles: Tile[],
     heights: Float32Array
     planes: Plane[]
+    objects: ObjectInstance[]
 }
 
 export interface Tile {
@@ -45,4 +46,28 @@ export enum SurfaceType {
     None,
     Water,
     Ice
+}
+
+export interface ObjectInstance {
+    id: number
+    position: Point
+    scale: Point
+    rotation: {X: number, Y: number, Z: number, W: number}
+    localToWorld: number[]
+    worldToLocal: number[]
+    cells: ObjectCell[]
+}
+
+export interface ObjectCell {
+    id: number
+    flag: number
+    a: Point
+    b: Point
+    c: Point
+}
+
+export interface Point {
+    X: number
+    Y: number
+    Z: number
 }

@@ -57,10 +57,13 @@ type GlobalEdge struct {
 type ObjectInstance struct {
 	ID            int                `json:"id"`
 	Position      *math32.Vector3    `json:"position"`
+	Scale         *math32.Vector3    `json:"scale"`
 	Rotation      *math32.Quaternion `json:"rotation"`
 	Cells         []ObjectCell       `json:"cells"`
 	InternalEdges []InternalEdge     `json:"internalEdges"`
 	GlobalEdges   []GlobalEdge       `json:"globalEdges"`
+	LocalToWorld  *math32.Matrix4    `json:"localToWorld"`
+	WorldToLocal  *math32.Matrix4    `json:"worldToLocal"`
 }
 
 type ObjectCell struct {
@@ -99,9 +102,12 @@ func MapObjects(objects []navmeshv2.RtNavmeshInstObj) []ObjectInstance {
 			ID:            int(o.ID),
 			Position:      o.Position,
 			Rotation:      o.Rotation,
+			Scale:         o.Scale,
 			Cells:         MapObjectCells(o.Object.Cells),
 			InternalEdges: MapInternalEdges(o.Object.InternalEdges),
 			GlobalEdges:   MapGlobalEdges(o.Object.GlobalEdges),
+			LocalToWorld:  o.LocalToWorld,
+			WorldToLocal:  o.WorldToLocal,
 		}
 
 		os = append(os, mappedObject)

@@ -3,8 +3,8 @@ import styles from "./NavmeshViewer.module.scss"
 import {useEffect, useRef, useState} from "react";
 import {fetchRegionDetails, fetchRegionsForContinent, RegionDetails} from "../../api/ApiClient";
 import {RegionMesh} from "./RegionMesh";
-import {Line, MapControls, OrbitControls, Text} from "@react-three/drei";
-import type {OrbitControls as OrbitControlsImpl} from 'three-stdlib';
+import {FlyControls, Line, MapControls, Text} from "@react-three/drei";
+import type {FlyControls as FlyControlsImpl} from 'three-stdlib';
 import {AxesHelper, PerspectiveCamera} from "three";
 
 extend({Line, MapControls, PerspectiveCamera, Text})
@@ -16,9 +16,10 @@ export const ScaleFactor = .1
 
 export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     const [regionDetails, setRegionDetails] = useState<RegionDetails[]>([])
-    const camera = useRef<PerspectiveCamera>(new PerspectiveCamera(25, 1, .1, 100_000))
-    const axesHelper = useRef(new AxesHelper(1920 * ScaleFactor * 10))
-    const controls = useRef<OrbitControlsImpl>(null)
+    const camera = useRef<PerspectiveCamera>(new PerspectiveCamera(25, 1, .1, 5))
+    const axesHelper = useRef(new AxesHelper())
+    // const controls = useRef<OrbitControlsImpl>(null)
+    const controls = useRef<FlyControlsImpl>(null)
     useEffect(() => {
         if (continent) {
             document.title = `Joymesh - ${continent}`
@@ -27,11 +28,21 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
             })
                 .then(resolvedDetails => {
                     setRegionDetails(resolvedDetails)
-                    const x = resolvedDetails[0]?.meta.X * 1920 * ScaleFactor
-                    const z = resolvedDetails[0]?.meta.Y * 1920 * ScaleFactor
-                    controls.current!.object.position.set(x, resolvedDetails[0]?.heights[0], z)
+                    const metas = resolvedDetails.map(r => r.meta).sort((a, b) => a.X - b.X)
+                    const median = Math.floor(metas.length*.5)
+
+
+                    const x = metas[median].X * 1920 * ScaleFactor
+                    const y = 100 + resolvedDetails[median].heights[0] * ScaleFactor
+                    const z = metas[median].Y * 1920 * ScaleFactor
+
+                    controls.current!.object.position.set(x, y, z)
+                    controls.current!.object.lookAt(x, 0, z)
+                    console.log(camera.current.far)
+                    // controls.current!.object.rotateZ(Math.PI)
+                    // controls.current!.object.rotateX(Math.PI*.5)
                     axesHelper.current.position.set(x, 0, z)
-                    controls.current!.target.set(x, 0, z)
+                    // controls.current!.target.set(x, 0, z)
                     controls.current!.object.updateMatrix()
                 })
         }
@@ -40,12 +51,13 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
 
 
     return (
-        <Canvas className={styles.canvas}>
+        <Canvas className={styles.canvas} >
             <ambientLight />
-            <perspectiveCamera ref={camera}/>
-            <OrbitControls ref={controls} panSpeed={1.75} zoomSpeed={1.25} />
+            <perspectiveCamera ref={camera} far={5}/>
+            {/*<OrbitControls ref={controls} panSpeed={1.75} zoomSpeed={1.25} />*/}
+            <FlyControls ref={controls} dragToLook={true} rollSpeed={.5} movementSpeed={150} />
 
-            <axesHelper ref={axesHelper} />
+            <axesHelper ref={axesHelper} scale={1920 * ScaleFactor * 200}/>
             {regionDetails.map(reg => (
                 <RegionMesh key={reg.meta.ID} region={reg} />
             ))}

@@ -2,9 +2,10 @@ import * as THREE from 'three'
 import {Euler, PlaneGeometry} from 'three'
 import {useEffect, useRef, useState} from "react";
 import {RegionDetails} from "../../api/ApiClient";
-import {Line, Plane, Text} from "@react-three/drei"
+import {Line, Text, Plane} from "@react-three/drei"
 import {extend} from "@react-three/fiber";
 import {ScaleFactor} from "./NavmeshViewer";
+import ObjectMesh from "./ObjectMesh";
 
 extend({Line})
 
@@ -13,7 +14,7 @@ type RegionProps = {
 }
 
 const toWorld = (num: number) => num * 1920 * ScaleFactor
-const defaultColor = "#656767"
+const defaultColor = "#777"
 
 export function RegionMesh({region}: RegionProps) {
     const ref = useRef<THREE.Group>(null!)
@@ -41,15 +42,21 @@ export function RegionMesh({region}: RegionProps) {
         geom.setFromPoints(points)
 
         setFixedGeom(geom)
-    }, [])
+    }, [region.heights])
 
     return (
-        <group ref={ref}>
-            <Text position={p1} fontSize={2} rotation={textRotation}
-                  color={defaultColor}>Region: {region.meta.ID}</Text>
-            <Plane geometry={fixedGeom} position={p1}>
-                <meshBasicMaterial color={defaultColor} wireframe={true}></meshBasicMaterial>
-            </Plane>
-        </group>
+        <instancedMesh>
+            <group ref={ref}>
+                <Text position={p1} fontSize={2} rotation={textRotation}
+                      color={defaultColor}>Region: {region.meta.ID}</Text>
+                <Plane geometry={fixedGeom} position={p1}>
+                    <meshBasicMaterial color={defaultColor} wireframe={true}></meshBasicMaterial>
+                </Plane>
+                {region.objects.map((object, i) => (
+                    <ObjectMesh key={i} regionMeta={region.meta} instance={object}/>
+                ))}
+
+            </group>
+        </instancedMesh>
     )
 }
