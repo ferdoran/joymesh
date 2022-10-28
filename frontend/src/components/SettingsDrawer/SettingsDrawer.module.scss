@@ -1,0 +1,17 @@
+@use "src/styles/_colors.scss";
+
+.drawer {
+
+    &__content {
+        color: colors.$primary;
+        height: 100%;
+        background-color: colors.$bg-primary;
+        padding: 4rem 4rem;
+    }
+
+    &__closeButton {
+        position: absolute;
+        color: colors.$primary;
+        left: 1rem;
+    }
+}

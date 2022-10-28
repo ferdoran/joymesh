@@ -1,11 +1,12 @@
 import * as THREE from 'three'
 import {Euler, PlaneGeometry} from 'three'
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {RegionDetails} from "../../api/ApiClient";
 import {Line, Text, Plane} from "@react-three/drei"
 import {extend} from "@react-three/fiber";
 import {ScaleFactor} from "./NavmeshViewer";
 import ObjectMesh from "./ObjectMesh";
+import {SettingsContext} from "../../App";
 
 extend({Line})
 
@@ -17,6 +18,7 @@ const toWorld = (num: number) => num * 1920 * ScaleFactor
 const defaultColor = "#777"
 
 export function RegionMesh({region}: RegionProps) {
+    const {settings} = useContext(SettingsContext)
     const ref = useRef<THREE.Group>(null!)
     const [p1] = useState<THREE.Vector3>(new THREE.Vector3(
         toWorld(region.meta.X) + (1920 * ScaleFactor * .5),
@@ -51,9 +53,9 @@ export function RegionMesh({region}: RegionProps) {
                 <meshBasicMaterial color={defaultColor} wireframe={true}></meshBasicMaterial>
             </Plane>
             <group>
-                {region.objects.map((object, i) => (
+                {settings.objectSettings.enableRenderCells ? region.objects.map((object, i) => (
                     <ObjectMesh key={i} regionMeta={region.meta} instance={object}/>
-                ))}
+                )): <></>}
             </group>
         </group>
     )

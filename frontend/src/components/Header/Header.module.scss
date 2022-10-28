@@ -4,8 +4,23 @@
   padding-left: .5rem;
   padding-right: .5rem;
   text-decoration: none;
+  flex-grow: 1;
 
   &:visited {
+    color: colors.$primary;
+  }
+}
+
+.toolbar {
+  padding-left: .9rem;
+  height: 100%;
+  color: colors.$primary;
+
+  &__divider {
+    background-color: colors.$primary;
+  }
+
+  &__settings {
     color: colors.$primary;
   }
 }

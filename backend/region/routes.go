@@ -90,7 +90,18 @@ func getContinents(c echo.Context) error {
 	var cs []string
 
 	for c := range continents {
-		cs = append(cs, c)
+		regions := continents[c]
+		regionDataExists := false
+		for _, r := range regions {
+			if _, exists := regionData[r]; exists {
+				regionDataExists = true
+				break
+			}
+		}
+
+		if len(continents[c]) > 0 && regionDataExists {
+			cs = append(cs, c)
+		}
 	}
 
 	return c.JSON(http.StatusOK, &cs)
