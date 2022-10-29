@@ -150,7 +150,7 @@ export function RegionMesh({region, onClick, onCellClicked, selected}: RegionPro
             }
             <group>
                 {settings.objectSettings.enableRenderCells ? region.objects!.map((object, i) => (
-                    <ObjectMesh key={i} regionMeta={region.meta} instance={object}/>
+                    <ObjectMesh key={i} instance={object}/>
                 )) : <></>}
             </group>
         </group>
