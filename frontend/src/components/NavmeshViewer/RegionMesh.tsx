@@ -116,13 +116,13 @@ export function RegionMesh({region, onClick, selected}: RegionProps) {
                     <mesh
                         onPointerOver={() => setCellColor("green")}
                         onPointerOut={() => setCellColor(defaultCellColor)}
-                        onClick={(e) => console.log("Cell clicked", e.point.sub(p1))}
+                        onClick={() => onClick(region)}
                     >
                         <bufferGeometry attach="geometry">
                             <bufferAttribute array={cellVertices} itemSize={3} count={cellVertices.length / 3}
                                              attach="attributes-position"/>
                         </bufferGeometry>
-                        <meshBasicMaterial wireframe={true} attach="material" color={cellColor}/>
+                        <meshBasicMaterial wireframe={true} attach="material" color={selected ? selectedColor : cellColor}/>
                     </mesh>
                 </group>
                 : <></>

@@ -96,7 +96,9 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
                 <axesHelper ref={axesHelper} scale={1920 * ScaleFactor * 200}/>
                 {regionDetails.map(reg => (
                     <RegionMesh key={reg.meta.ID} region={reg} selected={
-                        selectedRegions.has(reg.meta.ID) ? selectedRegions.get(reg.meta.ID)! : false
+                        selectedRegions.has(reg.meta.ID)
+                            ? selectedRegions.get(reg.meta.ID)!
+                            : fromRegion?.meta.ID === reg.meta.ID || toRegion?.meta.ID === reg.meta.ID
                     } onClick={handleRegionClicked}/>
                 ))}
             </Canvas>
