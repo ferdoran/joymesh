@@ -3,6 +3,7 @@ import styles from "./SettingsDrawer.module.scss"
 import Box from "@mui/material/Box"
 import ObjectSettingsView from "./ObjectSettingsView";
 import {ChevronRight} from "@mui/icons-material";
+import RegionSettingsView from "./RegionSettingsView";
 
 
 type SettingsWindowProps = {
@@ -17,6 +18,7 @@ export default function SettingsDrawer({open, onClose}: SettingsWindowProps) {
                 </IconButton>
             <Box component="form" className={styles.drawer__content}>
                 <ObjectSettingsView />
+                <RegionSettingsView />
             </Box>
         </Drawer>
     )

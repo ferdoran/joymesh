@@ -15,9 +15,6 @@ export default function ObjectMesh({instance, regionMeta}: ObjectMeshProps) {
     const ref = useRef(null)
     const [color, setColor] = useState(defaultColor)
     const cellVertices = useMemo(() => {
-        const rX = regionMeta.X * 1920
-        const rZ = regionMeta.Y * 1920
-        const regionOffset = new Vector3(rX, 0, rZ).multiplyScalar(ScaleFactor)
         const pos = toVector3(instance.position).multiplyScalar(ScaleFactor)
         const scale = toVector3(instance.scale).multiplyScalar(ScaleFactor)
         const rot = new Quaternion(instance.rotation.X, instance.rotation.Y, instance.rotation.Z, instance.rotation.W)
@@ -27,9 +24,6 @@ export default function ObjectMesh({instance, regionMeta}: ObjectMeshProps) {
             const b = new Vector3(cell.b.X, cell.b.Y, cell.b.Z).applyMatrix4(l2w)
             const c = new Vector3(cell.c.X, cell.c.Y, cell.c.Z).applyMatrix4(l2w)
 
-            a.add(regionOffset)
-            b.add(regionOffset)
-            c.add(regionOffset)
 
             return [a,b,c].flatMap(toNumberArray)
         }))

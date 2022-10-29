@@ -7,6 +7,7 @@ import {FlyControls, Line, MapControls, Text} from "@react-three/drei";
 import type {FlyControls as FlyControlsImpl} from 'three-stdlib';
 import {AxesHelper, PerspectiveCamera} from "three";
 import {Backdrop, CircularProgress} from "@mui/material";
+import {RegionPathFinder} from "../../model/RegionPathFinder";
 
 extend({Line, MapControls, PerspectiveCamera, Text})
 type NavmeshViewerProps = {
@@ -21,6 +22,31 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     const axesHelper = useRef(new AxesHelper())
     const controls = useRef<FlyControlsImpl>(null)
     const [loading, setLoading] = useState<boolean>(false)
+    const [regionPathFinder, setRegionPathFinder] = useState<RegionPathFinder>()
+    const [fromRegion, setFromRegion] = useState<RegionDetails>()
+    const [toRegion, setToRegion] = useState<RegionDetails>()
+    const [selectedRegions, setSelectedRegions] = useState<Map<number, boolean>>(new Map())
+
+    const handleRegionClicked = (region: RegionDetails) => {
+        if (fromRegion === undefined) {
+            console.log("Setting from region: ", region.meta.ID)
+            setFromRegion(region)
+        } else if (toRegion === undefined) {
+            console.log("Setting to region: ", region.meta.ID)
+            setToRegion(region)
+            const path = regionPathFinder?.findPath(fromRegion, region!)
+            const selecteds = new Map<number, boolean>()
+            path?.forEach(r => selecteds.set(r, true))
+            console.log("found path", path?.map(r => r))
+            setSelectedRegions(selecteds)
+        } else {
+            console.log("clearing regions")
+            setFromRegion(undefined)
+            setToRegion(undefined)
+            setSelectedRegions(new Map())
+        }
+    }
+
     useEffect(() => {
         if (continent) {
             document.title = `Joymesh - ${continent}`
@@ -33,7 +59,7 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
 
 
                     const x = (metas[median].X + 1) * 1920 * ScaleFactor
-                    const y = 100 + resolvedDetails[median].heights[0] * ScaleFactor
+                    const y = 100 + resolvedDetails[median].heights![0] * ScaleFactor
                     const z = (metas[median].Y + 1) * 1920 * ScaleFactor
 
                     controls.current!.object.position.set(x, y, z)
@@ -41,13 +67,16 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
                     controls.current!.object.updateMatrix()
                     axesHelper.current.position.set(x, 0, z)
                     setLoading(false)
+                    setRegionPathFinder(new RegionPathFinder(resolvedDetails))
+                    const selecteds = new Map<number, boolean>()
+                    resolvedDetails.forEach(r => selecteds.set(r.meta.ID, false))
+                    setSelectedRegions(selecteds)
                 })
         } else {
             setLoading(false)
         }
 
     }, [continent])
-
 
     return (
         <>
@@ -66,7 +95,9 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
 
                 <axesHelper ref={axesHelper} scale={1920 * ScaleFactor * 200}/>
                 {regionDetails.map(reg => (
-                    <RegionMesh key={reg.meta.ID} region={reg}/>
+                    <RegionMesh key={reg.meta.ID} region={reg} selected={
+                        selectedRegions.has(reg.meta.ID) ? selectedRegions.get(reg.meta.ID)! : false
+                    } onClick={handleRegionClicked}/>
                 ))}
             </Canvas>
         </>

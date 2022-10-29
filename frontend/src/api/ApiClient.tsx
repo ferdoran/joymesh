@@ -24,11 +24,14 @@ export interface Region {
 }
 
 export interface RegionDetails {
-    meta: Region,
-    tiles: Tile[],
+    meta: Region
+    tiles: Tile[]
     heights: Float32Array
     planes: Plane[]
+    cells: RegionCell[]
     objects: ObjectInstance[]
+    internalEdges: InternalEdge[]
+    globalEdges: GlobalEdge[]
 }
 
 export interface Tile {
@@ -69,4 +72,42 @@ export interface Point {
     X: number
     Y: number
     Z: number
+}
+
+export interface Point2 {
+    X: number
+    Y: number
+}
+
+export interface RegionCell {
+    id: number
+    min: Point2
+    max: Point2
+    objects: number[]
+}
+
+export interface InternalEdge {
+    id: number
+    flag: number
+    eventData: number
+    srcCellId: number
+    dstCellId: number
+    srcDir: number
+    dstDir: number
+    a: Point
+    b: Point
+}
+
+export interface GlobalEdge {
+    id: number
+    flag: number
+    eventData: number
+    srcCellId: number
+    dstCellId: number
+    srcDir: number
+    dstDir: number
+    srcRegionId: number
+    dstRegionId: number
+    a: Point
+    b: Point
 }

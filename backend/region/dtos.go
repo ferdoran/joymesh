@@ -43,7 +43,7 @@ type InternalEdge struct {
 type GlobalEdge struct {
 	ID          int             `json:"id"`
 	Flag        byte            `json:"flag"`
-	EventData   byte            `json:"EventData"`
+	EventData   byte            `json:"eventData"`
 	SrcCellID   int             `json:"srcCellId"`
 	DstCellID   int             `json:"dstCellId"`
 	SrcDir      byte            `json:"srcDir"`
