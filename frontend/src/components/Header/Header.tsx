@@ -15,6 +15,7 @@ export default function Header() {
                 <Toolbar disableGutters className={styles.toolbar}>
                     <MapIcon/>
                     <Link component={RouterLink} to="/" noWrap className={styles.title}>JOYMESH</Link>
+                    <span className={styles.toolbar__divider}></span>
                     <IconButton size="large" className={styles.toolbar__settings} onClick={() => setShowSettings(true)}><Settings /></IconButton>
                 </Toolbar>
                 <SettingsDrawer open={showSettings} onClose={() => setShowSettings(false)} />
