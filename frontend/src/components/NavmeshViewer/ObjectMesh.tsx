@@ -5,13 +5,12 @@ import {Matrix4, Quaternion, Vector3} from "three";
 
 type ObjectMeshProps = {
     instance: ObjectInstance
-    regionMeta: Region
 }
 
 const toVector3 = (p: Point) => new Vector3(p.X, p.Y, p.Z)
 const toNumberArray = (v: Vector3) => [v.x, v.y, v.z]
 const defaultColor = "yellow"
-export default function ObjectMesh({instance, regionMeta}: ObjectMeshProps) {
+export default function ObjectMesh({instance}: ObjectMeshProps) {
     const ref = useRef(null)
     const [color, setColor] = useState(defaultColor)
     const cellVertices = useMemo(() => {
@@ -27,7 +26,7 @@ export default function ObjectMesh({instance, regionMeta}: ObjectMeshProps) {
 
             return [a,b,c].flatMap(toNumberArray)
         }))
-    }, [instance, regionMeta])
+    }, [instance])
 
     return (
         <mesh ref={ref} onPointerOver={() => setColor("hotpink")} onPointerOut={() => setColor(defaultColor)}>

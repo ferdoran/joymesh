@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import {Euler, PlaneGeometry, Vector3} from 'three'
 import {useContext, useMemo, useRef, useState} from "react";
-import {Point, RegionDetails} from "../../api/ApiClient";
+import {Point, Region, RegionCell, RegionDetails} from "../../api/ApiClient";
 import {Plane, Text} from "@react-three/drei"
 import {ScaleFactor} from "./NavmeshViewer";
 import ObjectMesh from "./ObjectMesh";
@@ -10,6 +10,7 @@ import {SettingsContext} from "../../App";
 type RegionProps = {
     region: RegionDetails
     onClick: (region: RegionDetails) => void
+    onCellClicked: (region: Region, cell: RegionCell) => void
     selected: boolean
 }
 
@@ -20,20 +21,7 @@ const defaultBlockedEdgeColor = "red"
 const toNumberArray = (v: Vector3) => [v.x, v.y, v.z]
 const selectedColor = "hotpink"
 
-export function RegionMesh({region, onClick, selected}: RegionProps) {
-    const calcHeightForPoint = (p: Point) => {
-        const pX = p.X / 20
-        const pZ = p.Z / 20
-
-        return region.heights[pZ*97+pX]
-    }
-
-    const calcHeightForXZ = (x: number, z: number) => {
-        const pX = x / 20
-        const pZ = z / 20
-
-        return region.heights[pZ*97+pX]
-    }
+export function RegionMesh({region, onClick, onCellClicked, selected}: RegionProps) {
     const {settings} = useContext(SettingsContext)
     const ref = useRef<THREE.Group>(null!)
     const [p1] = useState<THREE.Vector3>(new THREE.Vector3(
@@ -66,6 +54,12 @@ export function RegionMesh({region, onClick, selected}: RegionProps) {
         96
     ).setFromPoints(terrainVertices), [terrainVertices])
     const cellVertices = useMemo(() => {
+        const calcHeightForXZ = (x: number, z: number) => {
+            const pX = x / 20
+            const pZ = z / 20
+
+            return region.heights[pZ*97+pX]
+        }
         return new Float32Array(region.cells.flatMap(cell => {
             const hA = calcHeightForXZ(cell.min.X, cell.min.Y)
             const hB = calcHeightForXZ(cell.min.X, cell.max.Y)
@@ -81,6 +75,12 @@ export function RegionMesh({region, onClick, selected}: RegionProps) {
     }, [region])
     const blockedEdgesVertices = useMemo(() => {
         return new Float32Array(region.internalEdges.filter(e => (e.flag & 3) !== 0).flatMap(edge => {
+            const calcHeightForPoint = (p: Point) => {
+                const pX = p.X / 20
+                const pZ = p.Z / 20
+
+                return region.heights[pZ*97+pX]
+            }
             const hA = calcHeightForPoint(edge.a)
             const hB = calcHeightForPoint(edge.b)
 
@@ -90,6 +90,14 @@ export function RegionMesh({region, onClick, selected}: RegionProps) {
             return [a, b].flatMap(toNumberArray)
         }))
     }, [region])
+
+    const handleCellClick = (cellOffset: Vector3, region: RegionDetails) => {
+        const tx = Math.floor((cellOffset.x / ScaleFactor) / 20)
+        const tz = Math.floor((cellOffset.z / ScaleFactor) / 20)
+        const tile = region.tiles[tz*96+tx]
+        const cell = region.cells.find(c => c.id === tile.cellId)!
+        onCellClicked(region.meta, cell)
+    }
 
 
     return (
@@ -116,7 +124,7 @@ export function RegionMesh({region, onClick, selected}: RegionProps) {
                     <mesh
                         onPointerOver={() => setCellColor("green")}
                         onPointerOut={() => setCellColor(defaultCellColor)}
-                        onClick={() => onClick(region)}
+                        onClick={(e) => handleCellClick(e.point.sub(p1), region)}
                     >
                         <bufferGeometry attach="geometry">
                             <bufferAttribute array={cellVertices} itemSize={3} count={cellVertices.length / 3}

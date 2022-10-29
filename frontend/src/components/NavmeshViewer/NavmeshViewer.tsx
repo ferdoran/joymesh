@@ -1,13 +1,14 @@
 import {Canvas, extend} from "@react-three/fiber";
 import styles from "./NavmeshViewer.module.scss"
 import {useEffect, useRef, useState} from "react";
-import {fetchRegionsForContinent, RegionDetails} from "../../api/ApiClient";
+import {fetchRegionsForContinent, Region, RegionCell, RegionDetails} from "../../api/ApiClient";
 import {RegionMesh} from "./RegionMesh";
 import {FlyControls, Line, MapControls, Text} from "@react-three/drei";
 import type {FlyControls as FlyControlsImpl} from 'three-stdlib';
 import {AxesHelper, PerspectiveCamera} from "three";
 import {Backdrop, CircularProgress} from "@mui/material";
 import {RegionPathFinder} from "../../model/RegionPathFinder";
+import {CellPathFinder} from "../../model/CellPathFinder";
 
 extend({Line, MapControls, PerspectiveCamera, Text})
 type NavmeshViewerProps = {
@@ -23,26 +24,52 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
     const controls = useRef<FlyControlsImpl>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const [regionPathFinder, setRegionPathFinder] = useState<RegionPathFinder>()
+    const [cellPathFinder, setCellPathFinder] = useState<CellPathFinder>()
     const [fromRegion, setFromRegion] = useState<RegionDetails>()
     const [toRegion, setToRegion] = useState<RegionDetails>()
+    const [fromCell, setFromCell] = useState<{ cell: RegionCell, region: Region }>()
+    const [toCell, setToCell] = useState<{ cell: RegionCell, region: Region }>()
     const [selectedRegions, setSelectedRegions] = useState<Map<number, boolean>>(new Map())
 
     const handleRegionClicked = (region: RegionDetails) => {
         if (fromRegion === undefined) {
             console.log("Setting from region: ", region.meta.ID)
-            setFromRegion(region)
+            // setFromRegion(region)
         } else if (toRegion === undefined) {
             console.log("Setting to region: ", region.meta.ID)
-            setToRegion(region)
-            const path = regionPathFinder?.findPath(fromRegion, region!)
+            // setToRegion(region)
+            // const path = regionPathFinder?.findPath(fromRegion, region!)
+            // const selecteds = new Map<number, boolean>()
+            // path?.forEach(r => selecteds.set(r, true))
+            // console.log("found path", path?.map(r => r))
+            // setSelectedRegions(selecteds)
+        } else {
+            console.log("clearing regions")
+            // setFromRegion(undefined)
+            // setToRegion(undefined)
+            // setSelectedRegions(new Map())
+        }
+    }
+
+    const handleCellClicked = (region: Region, cell: RegionCell) => {
+        if (fromCell === undefined) {
+            console.log("Setting from cell: ", region.ID, cell.id)
+            setFromCell({cell, region})
+        } else if (toCell === undefined) {
+            console.log("Setting to cell: ", region.ID, cell.id)
+            const tc = { cell, region }
+            setToCell(tc)
+            const path = cellPathFinder?.findPath(fromCell, tc)
             const selecteds = new Map<number, boolean>()
-            path?.forEach(r => selecteds.set(r, true))
-            console.log("found path", path?.map(r => r))
+            path?.forEach(r => selecteds.set(r.region.ID, true))
+            console.log("found path", path?.map(r => {
+                return {reg: r.region.ID, ce: r.cell.id}
+            }))
             setSelectedRegions(selecteds)
         } else {
             console.log("clearing regions")
-            setFromRegion(undefined)
-            setToRegion(undefined)
+            setFromCell(undefined)
+            setToCell(undefined)
             setSelectedRegions(new Map())
         }
     }
@@ -67,7 +94,8 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
                     controls.current!.object.updateMatrix()
                     axesHelper.current.position.set(x, 0, z)
                     setLoading(false)
-                    setRegionPathFinder(new RegionPathFinder(resolvedDetails))
+                    // setRegionPathFinder(new RegionPathFinder(resolvedDetails))
+                    setCellPathFinder(new CellPathFinder(resolvedDetails))
                     const selecteds = new Map<number, boolean>()
                     resolvedDetails.forEach(r => selecteds.set(r.meta.ID, false))
                     setSelectedRegions(selecteds)
@@ -95,11 +123,15 @@ export default function NavmeshViewer({continent}: NavmeshViewerProps) {
 
                 <axesHelper ref={axesHelper} scale={1920 * ScaleFactor * 200}/>
                 {regionDetails.map(reg => (
-                    <RegionMesh key={reg.meta.ID} region={reg} selected={
-                        selectedRegions.has(reg.meta.ID)
-                            ? selectedRegions.get(reg.meta.ID)!
-                            : fromRegion?.meta.ID === reg.meta.ID || toRegion?.meta.ID === reg.meta.ID
-                    } onClick={handleRegionClicked}/>
+                    <RegionMesh key={reg.meta.ID} region={reg}
+                                selected={
+                                    selectedRegions.has(reg.meta.ID)
+                                        ? selectedRegions.get(reg.meta.ID)!
+                                        : fromRegion?.meta.ID === reg.meta.ID || toRegion?.meta.ID === reg.meta.ID
+                                }
+                                onClick={handleRegionClicked}
+                                onCellClicked={handleCellClicked}
+                    />
                 ))}
             </Canvas>
         </>
